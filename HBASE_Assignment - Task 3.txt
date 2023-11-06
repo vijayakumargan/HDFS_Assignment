@@ -1,0 +1,31 @@
+
+TASK3
+create table album(rowkey String, singer STRING, song STRING,duration string,music_director string) 
+row format delimited fields terminated by ',';
+load data local inpath 'singer.csv'  into table album
+
+Created table in hive
+
+CREATE TABLE albumsToHBase(rowkey String,singer STRING, song STRING,duration string,music_director string)
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key,info:singer,info:song,info:duration,info:music_director')
+TBLPROPERTIES ('hbase.table.name' = 'aastha_db:album_hbase' );
+
+insert overwrite table albumsToHBase select * from album;
+
+
+Run queries like 1) getall songs sung by a singer 2) Which singer sung for music director AK and what were the songs
+
+
+1. getall songs sung by a singer
+1) scan 'aastha_db:album_hbase', {COLUMN=>['info:singer','info:song']}
+hbase(main):001:0> scan 'vijay_db:album_hbase', {COLUMN=>['info:singer','info:song']}
+
+
+2) Which singer sung for music director AK and what were the songs
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.BinaryComparator
+
+scan 'vijay_db:album_hbase', {COLUMNS=>['info:singer','info:song','info:music_director'],FILTER => SingleColumnValueFilter.new(Bytes.toBytes('info'), Bytes.toBytes('music_director'),CompareFilter::CompareOp.valueOf('EQUAL'),BinaryComparator.new(Bytes.toBytes('AK')))}
+

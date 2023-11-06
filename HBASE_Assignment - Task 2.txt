@@ -1,0 +1,37 @@
+TASK2
+Access the hbase data from hive
+For the above hbase table create a corresponding hive table and access the data by running queries in hive
+Created external table in hive below:
+CREATE EXTERNAL TABLE stocksymbolbyvarioususerToHBase(rowkey string,stock_symbol string, commentid string, userid string, displayname string, active string, comment string)STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'WITH SERDEPROPERTIES ('hbase.columns.mapping' = ':key,info:stock_symbol,info:commentid,info:userid,info:displayname,info:active,info:comment')TBLPROPERTIES ('hbase.table.name' = 'vijay_db:stocksymbolvarioususer');
+
+
+
+What are the various comments given by all the users?
+select userid,comment from stocksymbolbyvarioususerToHBase;
+hive> select userid,comment from stocksymbolbyvarioususerToHBase;
+OK
+user1   I have this one on my radar.
+user1   Interesting value proposition but too early to know if they will survive.
+user2   like this one but would suggest waiting a few months.
+user2   Not obvious yet but this stock is gonna be a huge winner.
+user3   Buy it now before the rush.
+user3   Dump this one fast!
+
+
+What are the comments by user3?
+select userid, comment from stocksymbolbyvarioususerToHBase where userid ='user3';
+Total MapReduce CPU Time Spent: 8 seconds 690 msec
+OK
+user3   Buy it now before the rush.
+user3   Dump this one fast!
+
+
+Which users have inactive comments?
+select userid from stocksymbolbyvarioususerToHBase where active='False';
+
+Total MapReduce CPU Time Spent: 8 seconds 320 msec
+OK
+user2
+user3
+
+

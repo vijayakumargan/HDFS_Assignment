@@ -1,0 +1,71 @@
+
+Design a Data model
+create "vijay_db:stocksymbolvarioususer","info"
+list_namespace_tables 'vijay_db'
+
+Inserting data into table ‘stocksymbolvarioususer’
+
+put "vijay_db:stocksymbolvarioususer","1","info:stock_symbol","EXC"
+put "vijay_db:stocksymbolvarioususer","1","info:commentid","comment1"
+put "vijay_db:stocksymbolvarioususer","1","info:userid","user1"
+put "vijay_db:stocksymbolvarioususer","1","info:displayname","KingJames"
+put "vijay_db:stocksymbolvarioususer","1","info:active","True"
+put "vijay_db:stocksymbolvarioususer","1","info:comment","I have this one on my radar."
+
+put "vijay_db:stocksymbolvarioususer","2","info:stock_symbol","EXC"
+put "vijay_db:stocksymbolvarioususer","2","info:commentid","comment2"
+put "vijay_db:stocksymbolvarioususer","2","info:userid","user1"
+put "vijay_db:stocksymbolvarioususer","2","info:displayname","KingJames"
+put "vijay_db:stocksymbolvarioususer","2","info:active","True"
+put "vijay_db:stocksymbolvarioususer","2","info:comment","Interesting value proposition but too early to know if they will survive."
+
+put "vijay_db:stocksymbolvarioususer","3","info:stock_symbol","INFI"
+put "vijay_db:stocksymbolvarioususer","3","info:commentid","comment1"
+put "vijay_db:stocksymbolvarioususer","3","info:userid","user2"
+put "vijay_db:stocksymbolvarioususer","3","info:displayname","Wizard of Wall Street"
+put "vijay_db:stocksymbolvarioususer","3","info:active","True"
+put "vijay_db:stocksymbolvarioususer","3","info:comment","like this one but would suggest waiting a few months."
+put "vijay_db:stocksymbolvarioususer","4","info:stock_symbol","INFI"
+put "vijay_db:stocksymbolvarioususer","4","info:commentid","comment2"
+put "vijay_db:stocksymbolvarioususer","4","info:userid","user2"
+put "vijay_db:stocksymbolvarioususer","4","info:displayname","Wizard of Wall Street"
+put "vijay_db:stocksymbolvarioususer","4","info:active","False"
+put "vijay_db:stocksymbolvarioususer","4","info:comment","Not obvious yet but this stock is gonna be a huge winner."
+put "vijay_db:stocksymbolvarioususer","5","info:stock_symbol","INFI"
+put "vijay_db:stocksymbolvarioususer","5","info:commentid","comment1"
+put "vijay_db:stocksymbolvarioususer","5","info:userid","user3"
+put "vijay_db:stocksymbolvarioususer","5","info:displayname","Time World Series Winner"
+put "vijay_db:stocksymbolvarioususer","5","info:active","False"
+put "vijay_db:stocksymbolvarioususer","5","info:comment","Buy it now before the rush."
+
+
+put "vijay_db:stocksymbolvarioususer","6","info:stock_symbol","INFI"
+put "vijay_db:stocksymbolvarioususer","6","info:commentid","comment2"
+put "vijay_db:stocksymbolvarioususer","6","info:userid","user3"
+put "vijay_db:stocksymbolvarioususer","6","info:displayname","Time World Series Winner"
+put "vijay_db:stocksymbolvarioususer","6","info:active","True"
+put "vijay_db:stocksymbolvarioususer","6","info:comment","Dump this one fast!"
+To check data in hbase table ‘stocksymbolvarioususer’
+scan "vijay_db:stocksymbolvarioususer"
+
+
+
+Queries: 
+What are the various comments given by all the users? 
+
+Scan 'vijay_db:stocksymbolvarioususer',{COLUMN=>['info:comment']}
+
+What are the comments by user3? 
+scan 'vijay_db:stocksymbolvarioususer', { FILTER => SingleColumnValueFilter.new(Bytes.toBytes('info'), Bytes.toBytes('userid'), CompareFilter::CompareOp.valueOf('EQUAL'),BinaryComparator.new(Bytes.toBytes('user3')))}
+
+Which users have inactive comments?
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.BinaryComparator
+
+scan 'vijay_db:stocksymbolvarioususer', { FILTER => SingleColumnValueFilter.new(Bytes.toBytes('info'),Bytes.toBytes('active'), CompareFilter::CompareOp.valueOf('EQUAL'),BinaryComparator.new(Bytes.toBytes('False')))}
+
+
+
+
+
